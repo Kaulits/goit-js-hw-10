@@ -63,7 +63,6 @@ function onSelectCat(e) {
             }, 1000);
             
         }).catch(error => {
-            showErrorMessage();
             Notiflix.Notify.failure('The cats have run away, try again');
             console.log(error);
         });

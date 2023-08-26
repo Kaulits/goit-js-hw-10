@@ -1,6 +1,5 @@
 
 
-
 export function fetchBreeds() {
 
 const apiAdress = 'https://api.thecatapi.com/v1/breeds';
@@ -14,7 +13,8 @@ const apiAdress = 'https://api.thecatapi.com/v1/breeds';
             return response.json();
         }).then(data => data.map(breed => ({ id: breed.reference_image_id, name: breed.name })))
         .catch(error => {
-            console.error('Error fetching breeds:', error);
+             Notiflix.Notify.failure('The cats have run away, try again');
+            console.log(error);
       throw error;
         });
 };
@@ -32,7 +32,8 @@ export function fetchCatByBreed (breedId) {
             return response.json();
         }).then (data => data)
         .catch(error => {
-            console.error('Error fetching cat by breed:', error);
+             Notiflix.Notify.failure('The cats have run away, try again');
+            console.log(error);
             throw error;
         });
 }
