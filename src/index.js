@@ -11,18 +11,19 @@ import { fetchBreeds, fetchCatByBreed } from './cat-api.js';
 const refs = {
     selectEl: document.querySelector('.breed-select'),
     loadEl: document.querySelector('.loader'),
-    errorEl: document.querySelector('.error'),
     divEl: document.querySelector('.cat-info'),
 }
 
 
-
+refs.selectEl.classList.add('hidden');
 refs.loadEl.classList.add('hidden');
 refs.divEl.classList.add('hidden');
 
 
 fetchBreeds()
     .then(breeds => {
+        refs.selectEl.classList.add('hidden');
+        refs.loadEl.classList.add('visible');
         breeds.forEach(breed => {
             const option = document.createElement('option');
             option.value = breed.id;
@@ -30,15 +31,18 @@ fetchBreeds()
             refs.selectEl.appendChild(option);
         });
         new SlimSelect({
-      select: refs.selectEl,
-    });
+            select: refs.selectEl,
+        });
     }).
-    catch(OMG => {
-        console.log('I HATE THIS', OMG);
+    catch(error => {
+        console.log('I HATE THIS', error);
+    }).finally(() => {
+        setTimeout(() => { refs.selectEl.classList.remove('hidden');
+        refs.loadEl.classList.remove('visible')   }, 500);
     });
 
 
-
+    
 
 refs.selectEl.addEventListener('change', onSelectCat);
 
@@ -46,7 +50,10 @@ function onSelectCat(e) {
     e.preventDefault();
     const breedId = e.target.value;
     clearCatInfo();
-    loaderOn();
+      refs.loadEl.classList.add('visible');
+    refs.loadEl.classList.remove('hidden');
+     refs.divEl.classList.add('hidden');
+      refs.divEl.classList.remove('visible');
     fetchCatByBreed(breedId)
         .then(data => {
             const breed = data.breeds[0]; 
@@ -59,7 +66,10 @@ function onSelectCat(e) {
             };
             setTimeout(() => {
                 markUpCats(cats);
-                hiddenVisible();
+                refs.loadEl.classList.add('hidden');
+      refs.loadEl.classList.remove('visible');
+     refs.divEl.classList.add('visible');
+      refs.divEl.classList.remove('hidden');
             }, 1000);
             
         }).catch(error => {
@@ -77,25 +87,8 @@ function markUpCats(cats) {
   refs.divEl.innerHTML = markup;
 }
 
-function hiddenVisible() {
-   
-     refs.loadEl.classList.add('hidden');
-      refs.loadEl.classList.remove('visible');
-     refs.divEl.classList.add('visible');
-      refs.divEl.classList.remove('hidden');
-}
-
-function loaderOn() {
-     refs.loadEl.classList.add('visible');
-    refs.loadEl.classList.remove('hidden');
-
-     refs.divEl.classList.add('hidden');
-      refs.divEl.classList.remove('visible');
-}
-
 
 function clearCatInfo() {
    refs.divEl.textContent = '';
-   
 }
 
